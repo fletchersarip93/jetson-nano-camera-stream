@@ -65,7 +65,7 @@ def stream_encoded_frame():
 
         yield (b'--frame\r\n'
             b'Content-Type:image/jpeg\r\n\r\n'
-            bytearray(video_frame)
+            + bytearray(video_frame) +
             b'\r\n')
 
 @app.route('/')
