@@ -5,7 +5,7 @@ FROM nvcr.io/nvidia/l4t-base:r32.5.0
 RUN apt-get update
 RUN apt-get install python3 -y
 RUN apt-get install python3-pip -y
-
+RUN pip3 install --upgrade pip
 
 WORKDIR /app
 
