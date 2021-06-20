@@ -1,6 +1,11 @@
 # syntax=docker/dockerfile:1
 
-FROM python:3.9-slim
+FROM nvcr.io/nvidia/l4t-base:r32.5.0
+
+RUN apt-get update
+RUN apt-get install python3 -y
+RUN apt-get install python3-pip -y
+
 
 WORKDIR /app
 
