@@ -2,8 +2,12 @@ import threading
 from flask import Response, Flask
 import cv2
 import time
+import atexit
 
 app = Flask(__name__)
+
+global video_capture
+video_capture = None
 
 global video_frame
 video_frame = None
@@ -19,7 +23,7 @@ capture_width = 3280
 capture_height = 2464
 
 
-GSTREAMER_PIPELINE = ('nvarguscamerasrc ! ideo/x-raw(memory:NVMM), '
+GSTREAMER_PIPELINE = ('nvarguscamerasrc ! video/x-raw(memory:NVMM), '
     f'width={capture_width}, height={capture_height}, '
     f'format=(string)NV12, framerate=(fraction){fps}/1 ! nvvidconv ! '
     f'video/x-raw, width=(int){width}, height=(int){height}, format=(string)BGRx ! videoconvert ! '
@@ -29,7 +33,7 @@ GSTREAMER_PIPELINE = ('nvarguscamerasrc ! ideo/x-raw(memory:NVMM), '
 def get_video_frame():
 
     # declare global variable
-    global video_frame, thread_lock
+    global video_frame, thread_lock, video_capture
 
     # use the cv2 VideoCapture
     video_capture = cv2.VideoCapture(GSTREAMER_PIPELINE, cv2.CAP_GSTREAMER)
@@ -52,6 +56,15 @@ def get_video_frame():
     
     video_capture.release()
     print('video_capture released')
+
+def release_video_capture():
+    global video_capture
+    
+    if video_capture:
+        video_capture.release()
+        print('video_capture released')
+    else:
+        print('no video_capture to release')
 
 # flask application behaviors
 def stream_encoded_frame():
@@ -86,6 +99,8 @@ if __name__ == '__main__':
     get_video_thread = threading.Thread(target=get_video_frame)
     get_video_thread.daemon = True
     get_video_thread.start()
+
+    atexit.register(release_video_capture)
 
     # start the flask application
     app.run('0.0.0.0', port='8000')
