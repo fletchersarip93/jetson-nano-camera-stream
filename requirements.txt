@@ -4,9 +4,7 @@ Flask==2.0.1
 importlib-metadata==4.5.0
 itsdangerous==2.0.1
 Jinja2==3.0.1
-MarkupSafe==2.0.1
-numpy==1.19.5
-opencv-python==4.5.2.54
+MarkupSafe==1.0
 typing-extensions==3.10.0.0
 Werkzeug==2.0.1
 zipp==3.4.1
